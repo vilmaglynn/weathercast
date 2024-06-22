@@ -173,7 +173,7 @@
   margin-top: -1px;
   display: none;
   background-color: rgb(250, 248, 243);
-  min-height: 200px;
+  height: 100%;
   border-radius: 8px;
 }
 

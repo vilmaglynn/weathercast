@@ -217,16 +217,15 @@ function displayForecast(data) {
   mainTabContainer.innerHTML = "";
   tabContentContainer.innerHTML = "";
 
-  // Process the forecast data to get the first instance for each day
-  const dailyForecast = getFirstInstancePerDay(data.list);
+  // Get daily statistics for the forecast data
+  const dailyForecast = getDailyStatistics(data.list);
 
   dailyForecast.forEach((forecast, index) => {
-    const date = formatDateWithDayjs(forecast.dt_txt);
-    const temp_min = forecast.main.temp_min;
-    const temp_max = forecast.main.temp_max;
-    const description = forecast.weather[0].description;
-    const iconCode = forecast.weather[0].icon;
-    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+    const date = formatDateWithDayjs(forecast.date);
+    const avgTemp = forecast.avgTemp;
+    const minTemp = forecast.minTemp;
+    const maxTemp = forecast.maxTemp;
+    const commonWeather = forecast.commonWeather;
 
     // Create a div for each day's forecast
     const dayTab = document.createElement("div");
@@ -242,31 +241,33 @@ function displayForecast(data) {
     const dateTitle = document.createElement("h2");
     dateTitle.textContent = date;
 
-    // Create an image element for the weather icon
-    const iconImg = document.createElement("img");
-    iconImg.src = iconUrl;
-    iconImg.alt = description;
-    iconImg.className = "weather-icon"; // Optional: Add a class for styling
+    // Create a paragraph for the temperatures
+    const tempInfo = document.createElement("p");
+    tempInfo.textContent = `Avg: ${avgTemp}°C, Min: ${minTemp}°C, Max: ${maxTemp}°C`;
 
-    // Create a paragraph for the temperature and description
-    const weatherInfo1 = document.createElement("p");
-    const weatherInfo2 = document.createElement("p");
-    weatherInfo1.textContent = `min ${temp_min}°C - max ${temp_max}°C `;
-    weatherInfo2.textContent = `${description}`;
+    // Create a paragraph for the description
+    const descriptionInfo = document.createElement("p");
+    descriptionInfo.textContent = commonWeather.description;
 
-    // Append the title, icon, and weather info to the dayTab
+    // Create an image for the weather icon
+    const iconElement = document.createElement("img");
+    iconElement.src = `https://openweathermap.org/img/wn/${commonWeather.icon}@2x.png`;
+    iconElement.alt = commonWeather.description;
+    iconElement.className = "daily-icon";
+
+    // Append elements to the dayTab
     dayTab.appendChild(dateTitle);
-    dayTab.appendChild(iconImg);
-    dayTab.appendChild(weatherInfo1);
-    dayTab.appendChild(weatherInfo2);
+    dayTab.appendChild(tempInfo);
+    dayTab.appendChild(iconElement);
+    dayTab.appendChild(descriptionInfo);
 
-    // Append the dayTab to the tab-header
+    // Append the dayTab to the mainTabContainer
     mainTabContainer.appendChild(dayTab);
 
-    // Create the content container for hourly forecasts
+    // Create a div for the content associated with each day's forecast
     const dayContent = document.createElement("div");
     dayContent.className = "tab-content";
-    dayContent.id = `day-${index}`;
+    dayContent.id = `day-${index}`; // Match this ID with the data-tab attribute
 
     // Add the "active" class to the first content container
     if (index === 0) {
@@ -274,7 +275,7 @@ function displayForecast(data) {
     }
 
     // Add hourly forecasts for the selected day
-    const hourlyForecast = getHourlyForecastForDay(data.list, forecast.dt_txt);
+    const hourlyForecast = getHourlyForecastForDay(data.list, forecast.date);
     hourlyForecast.forEach((hour) => {
       const hourDiv = document.createElement("div");
       hourDiv.className = "hourly-forecast";
@@ -315,25 +316,59 @@ function displayForecast(data) {
   setupTabNavigation();
 }
 
-// Function to extract the first instance for each day from the forecast list
-function getFirstInstancePerDay(list) {
-  const dailyForecast = [];
-  let lastDate = "";
+// Function to extract daily statistics from the forecast list
+function getDailyStatistics(list) {
+  const dailyData = {};
 
   list.forEach((item) => {
-    const itemDate = item.dt_txt.split(" ")[0]; // Get the date part (YYYY-MM-DD)
-    if (itemDate !== lastDate) {
-      dailyForecast.push(item); // Add the first instance of a new date
-      lastDate = itemDate; // Update the last processed date
+    const date = item.dt_txt.split(" ")[0]; // Get the date part (YYYY-MM-DD)
+    if (!dailyData[date]) {
+      dailyData[date] = {
+        tempSum: 0,
+        tempCount: 0,
+        minTemp: item.main.temp,
+        maxTemp: item.main.temp,
+        weatherCounts: {}, // To count occurrences of each weather condition
+        date: date
+      };
     }
+
+    dailyData[date].tempSum += item.main.temp;
+    dailyData[date].tempCount += 1;
+    dailyData[date].minTemp = Math.min(dailyData[date].minTemp, item.main.temp);
+    dailyData[date].maxTemp = Math.max(dailyData[date].maxTemp, item.main.temp);
+
+    // Count the weather condition
+    const weather = item.weather[0];
+    if (!dailyData[date].weatherCounts[weather.icon]) {
+      dailyData[date].weatherCounts[weather.icon] = {
+        count: 0,
+        description: weather.description,
+        icon: weather.icon
+      };
+    }
+    dailyData[date].weatherCounts[weather.icon].count += 1;
   });
 
-  return dailyForecast;
+  return Object.values(dailyData).map((day) => {
+    // Find the most common weather condition
+    const commonWeather = Object.values(day.weatherCounts).reduce(
+      (max, current) => (current.count > max.count ? current : max)
+    );
+
+    return {
+      date: day.date,
+      avgTemp: (day.tempSum / day.tempCount).toFixed(1),
+      minTemp: day.minTemp.toFixed(1),
+      maxTemp: day.maxTemp.toFixed(1),
+      commonWeather: commonWeather
+    };
+  });
 }
 
 // Function to get hourly forecast for a specific day
 function getHourlyForecastForDay(list, dayDate) {
-  return list.filter((item) => item.dt_txt.startsWith(dayDate.split(" ")[0]));
+  return list.filter((item) => item.dt_txt.startsWith(dayDate));
 }
 
 // Function to format date using Day.js
