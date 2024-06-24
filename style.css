@@ -5,14 +5,6 @@
   box-sizing: border-box;
 }
 
-/* Basic styles for the main div container */
-
-.main-container {
-  position: relative;
-  margin: 20px;
-  overflow: hidden;
-}
-
 /* Navbar area */
 .navbar {
   background-color: rgb(13, 30, 53);
@@ -130,6 +122,14 @@
   border-radius: 8px;
 }
 
+/* Basic styles for the main div container */
+
+.main-container {
+  position: relative;
+  overflow: hidden;
+  width: 80%;
+  margin: 40px auto;
+}
 /* Wrapper to contain the scrollable tab headers */
 .tab-header-wrapper {
   display: flex;
@@ -159,8 +159,7 @@
 /* Style for the active tab */
 .tab-header .active {
   background-color: rgb(250, 248, 243);
-  min-width: 300px;
-  /* min-height: 50px; */
+  min-width: 280px;
   border-top: 16px solid #e87400;
 }
 
@@ -169,7 +168,7 @@
 }
 /* Style for the tab content */
 .tab-content {
-  padding: 20px;
+  padding: 10px 20px;
   margin-top: -1px;
   display: none;
   background-color: rgb(250, 248, 243);
@@ -181,24 +180,25 @@
 .tab-content.active {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
+  margin-right: 5px;
 }
 
 /* Style for the arrow buttons */
 .arrow {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 78px;
   width: 30px;
-  height: 150px;
-  color: #1bb5ed;
+  height: 380px;
+  color: #1bb5ed74;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.3s;
   z-index: 1;
-  background-color: rgba(214, 227, 251, 0.559);
+  background-color: rgba(214, 227, 251, 0.46);
 }
 
 .arrow:hover {

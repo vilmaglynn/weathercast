@@ -238,12 +238,16 @@ function displayForecast(data) {
     }
 
     // Create a title element
-    const dateTitle = document.createElement("h2");
+    const dateTitle = document.createElement("h3");
     dateTitle.textContent = date;
 
     // Create a paragraph for the temperatures
-    const tempInfo = document.createElement("p");
-    tempInfo.textContent = `Avg: ${avgTemp}°C, Min: ${minTemp}°C, Max: ${maxTemp}°C`;
+    const tempInfo1 = document.createElement("p");
+    const tempInfo2 = document.createElement("p");
+    const tempInfo3 = document.createElement("p");
+    tempInfo1.textContent = `Avg: ${avgTemp}°C`;
+    tempInfo2.textContent = `Min: ${minTemp}°C`;
+    tempInfo3.textContent = `Max: ${maxTemp}°C`;
 
     // Create a paragraph for the description
     const descriptionInfo = document.createElement("p");
@@ -257,7 +261,9 @@ function displayForecast(data) {
 
     // Append elements to the dayTab
     dayTab.appendChild(dateTitle);
-    dayTab.appendChild(tempInfo);
+    dayTab.appendChild(tempInfo1);
+    dayTab.appendChild(tempInfo2);
+    dayTab.appendChild(tempInfo3);
     dayTab.appendChild(iconElement);
     dayTab.appendChild(descriptionInfo);
 
@@ -281,7 +287,8 @@ function displayForecast(data) {
       hourDiv.className = "hourly-forecast";
 
       const hourTime = formatHourWithDayjs(hour.dt_txt);
-      const hourTemp = hour.main.temp;
+      const hourTemp1 = hour.main.temp_min;
+      const hourTemp2 = hour.main.temp_max;
       const hourDescription = hour.weather[0].description;
       const hourIconCode = hour.weather[0].icon;
       const hourIconUrl = `https://openweathermap.org/img/wn/${hourIconCode}@2x.png`;
@@ -289,8 +296,11 @@ function displayForecast(data) {
       const hourTimeElement = document.createElement("h4");
       hourTimeElement.textContent = hourTime;
 
-      const hourTempElement = document.createElement("p");
-      hourTempElement.textContent = `${hourTemp}°C`;
+      const hourTempElement1 = document.createElement("p");
+      hourTempElement1.textContent = `${hourTemp1}°C`;
+
+      const hourTempElement2 = document.createElement("p");
+      hourTempElement2.textContent = `${hourTemp2}°C`;
 
       const hourDescriptionElement = document.createElement("p");
       hourDescriptionElement.textContent = hourDescription;
@@ -302,7 +312,8 @@ function displayForecast(data) {
 
       hourDiv.appendChild(hourTimeElement);
       hourDiv.appendChild(hourIconElement);
-      hourDiv.appendChild(hourTempElement);
+      hourDiv.appendChild(hourTempElement1);
+      hourDiv.appendChild(hourTempElement2);
       hourDiv.appendChild(hourDescriptionElement);
 
       dayContent.appendChild(hourDiv);
