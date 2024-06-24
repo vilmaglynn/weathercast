@@ -1,10 +1,10 @@
 # weathercast
 
-Welcome to WeatherCast, a modern weather application created with JavaScript! WeatherCast offers a user-friendly interface to check real-time weather conditions and forecasts for any location in the world.
+Welcome to WeatherCast, a weather application created with JavaScript. WeatherCast offers a user-friendly interface to check real-time weather conditions and forecasts for any location in the world.
 
 ![Weathercast](./images/weathercast.png)
 
-https://vilmaglynn.github.io/weathercast/
+Go to github page : https://vilmaglynn.github.io/weathercast/
 
 ## Features
 
@@ -30,4 +30,4 @@ Contact
 For any questions or suggestions, feel free to reach out:
 
 GitHub: [vilmaglynn](https://github.com/vilmaglynn)
-Email: vilmaglynn@ehotmail.com
+Email: vilmaglynn@hotmail.com
